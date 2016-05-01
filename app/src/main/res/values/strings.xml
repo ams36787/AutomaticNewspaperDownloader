@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">AutomaticNewspaperDownloader</string>
+
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_contact">Kontakt</string>
+    <string name="action_daten_aktualisieren">Aktualisieren</string>
+    <string name="action_load_todays_edition">Lade heutige Ausgabe</string>
+    <string name="btCancel"> btCancel </string>
+    <string name="btOneTime"> btOneTime </string>
+    <string name="btStart"> btStart </string>
+
+    <string name="title_activity_contact">Kontakt</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <string name="preference_DownloadInWifiOnly_Title">Download nur bei aktiver WiFi-Verbindung</string>
+    <string name="preference_DownloadInWifiOnly_key">DownloadInWifiOnly_key</string>
+    <string name="preference_DownloadInWifiOnly_summary_off">Daten werden bei jeder verfügbaren Netzwerkverbindung heruntergeladen (Achtung: Gefahr eines erhöhten Datenverbrauches!)</string>
+    <string name="preference_DownloadInWifiOnly_summary_on">Daten werden nur bei einer verfügbaren WiFi-Verbindung heruntergeladen</string>
+
+    <string name="preference_login_username_title">Benutzername</string>
+    <string name="preference_login_username_key">login_username</string>
+    <string name="preference_login_username_summary">Benutzernamen für den ePaper Login auf idowa.de</string>
+    <string name="preference_login_username_default">123456</string>        <!-- todo remove Login data from final SW version 123456 -->
+
+    <string name="preference_login_password_title">Passwort</string>
+    <string name="preference_login_password_key">login_password</string>
+    <string name="preference_login_password_summary">Passwort für den ePaper Login auf idowa.de</string>
+    <string name="preference_login_password_default">12345678</string>      <!-- todo remove Login data from final SW version 12345678 -->
+
+    <string name="preference_download_time_title">Uhrzeit für automatisierten Download</string>
+    <string name="preference_download_time_key">download_time</string>
+    <string name="preference_download_time_summary">Zu dieser Zeit wird die tägliche Ausgabe heruntergeladen (Je nach aktiver Zeitzone)</string>
+    <string name="preference_download_time_default">06:00</string>
+
+    <string name="preference_download_automatic_title">Automatisches Herunterladen der täglichen Ausgabe</string>
+    <string name="preference_download_automatic_key">automatic_key</string>
+    <string name="preference_download_automatic_on">Aktiviert. </string>
+    <string name="preference_download_automatic_off">Deaktiviert. Es ist ausschließlich der manuelle Download verfügbar</string>
+
+    <string name="preference_category_general_title">Allgemeine Einstellungen</string>
+    <string name="preference_category_general_key">category_general</string>
+    <string name="preference_category_automatic_download_title">Einstellungen zum automatischen Download</string>
+    <string name="preference_category_automatic_download_key">category_automatic_download</string>
+
+    <string name="preference_debugMode_title">Entwickler-Modus</string>
+    <string name="preference_debugMode_key">debugMode</string>
+    <string name="preference_debugMode_summary_off">Der Entwickler-Modus ist deaktiviert. </string>
+    <string name="preference_debugMode_summary_on">Der Entwickler-Modus ist eingeschaltet. Diverse Funktionen sind modifiziert aktiv.</string>
+
+    <string name="preference_enable_autostart_title"> Autostart beim Neustart des Gerätes</string>
+    <string name="preference_enable_autostart_key">autostart</string>
+    <string name="preference_enable_autostart_summary_off">Die Autostart-Funktion ist deaktiviert</string>
+    <string name="preference_enable_autostart_summary_on">Die Autostart-Funktion ist aktiv. Beim Booten des Geräts wird die App automatisch gestartet</string>
+
+    <string name="preference_MoveFilesToSdcard">Verwende die SD-Karte als externes Speichermedium</string>
+    <string name="preference_MoveFilesToSdcard_key">MoveFilesToSdcard</string>
+    <string name="preference_MoveFilesToSdcard_off">Deaktiviert. Die Dateien bleiben im Download-Verzeichnis auf dem Gerät</string>
+    <string name="preference_MoveFilesToSdcard_on">Aktiviert. Die Dateien werden auf die Externe SD-Karte verschoben</string>
+
+    <string name="preference_filestokeep_title">Maximale Anzahl der gespeicherten Ausgaben</string>
+    <string name="preference_filestokeep_key">filestokeep</string>
+    <string name="preference_filestokeep_summary">Wenn mehr als xy Ausgaben auf dem Geräte gespeichert sind, werden die Ältesten automatisch gelöscht (Für eine unbegrenzte Anzahl 0 eintragen)</string>
+    <string name="preference_filestokeep_default">10</string>
+
+    <string name="alert_delete">Möchten Sie die folgende Datei löschen? \n</string>
+    <string name="altert_yes">Ja</string>
+    <string name="alert_no">Nein</string>
+    <string name="alert_delete_confirmed">Datei löschen ...</string>
+    <string name="alert_delete_aborted">Aktion abgebrochen</string>
+
+    <string name="toast_move_files">Die PDF-Dateien werden verschoben...</string>
+
+    <string name="text_contact">
+        <b>AutomaticNewspaperDownloader</b> V1.1 \n
+        \n
+        <u>Autor:</u>  Stefan Amann \n
+        <u>mailto:</u> stefan.amann@stud.hs-regensburg.de \n
+        \n
+        <i>Diese Android App wurde im Rahmen einer Projektarbeit im Studiengang Electrical and Microsystems Engineering an der OTH Regensburg entwickelt.</i>
+     </string>
+
+    <!-- todo add ggf. github link -->
+
+
+</resources>
