@@ -80,7 +80,7 @@ public class SettingsActivity extends Activity {
 
                         if(bUpdateAlarm) // only setAlarm execute if necessary and show
                             {
-                                AutoStartUpService.setAlarm(AutoStartUpService.mContext, true);
+                                AutoStartUpService.setAlarm(AutoStartUpService.mContext, true); // Show Toast if Settings were changed
                             }
 
                         if(bMoveFilesToSdcard) //only execute if necessary

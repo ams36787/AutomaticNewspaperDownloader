@@ -94,7 +94,7 @@ public class AutoStartUpService extends Service {
         super.onCreate();
 
         InitService(this);  // initialisation of serveral variables
-        setAlarm(this, true);     // set alarm once started up; do show the toast
+        setAlarm(this, false);     // set alarm once started up; do not show the toast
     }
 
 
