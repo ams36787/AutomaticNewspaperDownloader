@@ -88,9 +88,18 @@ public class ListviewFragment extends Fragment {
         // ausgewählt wurde und geben eine Meldung aus
         int id = item.getItemId();
 
-        if (id == R.id.action_load_todays_edition)
+        if (id == R.id.action_load_todays_edition) // Start a download the newest newspaper edition according to the set preferences
         {
-            AutoStartUpService.loadTodaysEdition(getActivity(), false);
+            int iConnectionStatus = AutoStartUpService.loadTodaysEdition(getActivity(), false); // Start download
+
+            if (iConnectionStatus == 1){ // If internet connection is available, but no wifi connected, open a dialog that allows to ignore the download-only-with-wifi-preference
+                // ToDo: open Dialog to ask weather download should be started manually
+                if(false)
+                {
+                    AutoStartUpService.loadTodaysEdition(getActivity(), false);
+                }
+            }
+
         }
 
         // ToDo: manual download of certain newspaper edition using CalendarDatePicker from Betterpickers

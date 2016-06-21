@@ -35,7 +35,7 @@ package oth_regensburg.automaticnewspaperdownloader;
 
 public class AutoStartUpService extends Service {
 
-    public static PowerManager mPowerManager;
+    public static PowerManager mPowerManager; //abc
     public static PowerManager.WakeLock mWakeLock = null;
     public static final int mWakeLockState = PowerManager.PARTIAL_WAKE_LOCK;
     public static Context mContext = null;
@@ -51,7 +51,7 @@ public class AutoStartUpService extends Service {
     private static boolean bSetDownloadWifiOnly;
     public static boolean bSetMoveFilesToSdcard;
     private static String sSetDownloadTime;
-    public static String sFilesToKeep;
+   // public static String sFilesToKeep;
     public static int iFilesToKeep;
     public static String sFilePath = "/storage/extSdCard/Android/data/oth_regensburg.automaticnewspaperdownloader/files/";
     public static String sFilePathExtSdcardFolder = "/storage/extSdCard/Android/data/oth_regensburg.automaticnewspaperdownloader/files/";
@@ -211,8 +211,9 @@ public class AutoStartUpService extends Service {
         return true;
     }
 
-    public static void loadTodaysEdition(Context context, boolean bShowToast) {
+    public static int loadTodaysEdition(Context context, boolean bShowToast) { // todo seperate internet connection state from this fucntion
         // Check for Internet and WiFi Connection
+        int DownloadStarted=0;
         if (haveNetworkConnection(context)) {
             boolean bStartDownload = true;
 
@@ -230,12 +231,16 @@ public class AutoStartUpService extends Service {
 
                 sNotificationTitle = "Download started";                // Set Notification Strings
                 sNotificationText = "via WiFi " + getDateStringNow();  // Set Notification Strings
+                DownloadStarted = 0; // Download started successfully
+
             } else {   // Do Not Start Download, because there is no Wifi available
                 sNotificationTitle = "Download failed";                             // Set Notification Strings
                 sNotificationText = "No WiFi Connection " + getDateStringNow();    // Set Notification Strings
 
                 Toast.makeText(context, "No WiFi available!",
                         Toast.LENGTH_SHORT).show();
+
+                DownloadStarted = 1; // Download not started; Internet connection available, but no wifi connected
 
                 releaseTheLock();
             }
@@ -244,6 +249,7 @@ public class AutoStartUpService extends Service {
                     Toast.LENGTH_SHORT).show();
             sNotificationTitle = "Download failed";                                         // Set Notification Strings
             sNotificationText = "No Network Connection available " + getDateStringNow();   // Set Notification Strings
+            DownloadStarted = 2; // Download not started; No internet connection available
 
         }
 
@@ -251,6 +257,7 @@ public class AutoStartUpService extends Service {
 
         // Set new alarm (for the next day)
         setAlarm(context, bShowToast);
+        return DownloadStarted;
     }
 
     public static void issueNotification(Context context) { // todo: add on click open app
@@ -269,7 +276,7 @@ public class AutoStartUpService extends Service {
         Notification noti = new Notification.Builder(context)
                 .setContentTitle(sNotificationTitle)
                 .setContentText(sNotificationText)
-                .setSmallIcon(R.drawable.ic_news_49)
+                .setSmallIcon(R.drawable.ic_news_52)
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true)
                 .build();
