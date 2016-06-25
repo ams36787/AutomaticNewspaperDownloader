@@ -31,6 +31,8 @@ package oth_regensburg.automaticnewspaperdownloader;
 
         import android.support.v4.widget.SwipeRefreshLayout;
 
+        import org.apache.commons.io.FilenameUtils;
+
 
 public class ListviewFragment extends Fragment {
 
@@ -130,7 +132,7 @@ public class ListviewFragment extends Fragment {
         AutoStartUpService.updateSettings(getActivity()); //todo check if this works
 
         // update View with correct Layout
-        refreshView(arrayListeFiles);
+        refreshView(arrayListeFiles, getActivity());
 
 
 // Eine Referenz zu unserem ListView, und Verbinden des ArrayAdapters mit dem ListView
@@ -208,7 +210,7 @@ public class ListviewFragment extends Fragment {
 
                     // Refresh View
                     arrayListeFiles = MainActivity.scanSdCardFolder();
-                    refreshView(arrayListeFiles);
+                    refreshView(arrayListeFiles, getActivity());
 
                     break;
 
@@ -222,11 +224,14 @@ public class ListviewFragment extends Fragment {
         }
     };
 
-    public static void refreshView(String strings[])
+    public static void refreshView(String strings[], Context context)
     {   // updates the View
         ListviewFragment.mNewspaperListAdapter.clear();
 
         String[] TemparrayListeAddInfo = new String[arrayListeFiles.length];
+        String[] sEditionReadSymbol = new String[arrayListeFiles.length];
+
+        int iBadgeCounter=arrayListeFiles.length;
 
         for (int i=0; i<arrayListeFiles.length; i++)
         {
@@ -235,8 +240,27 @@ public class ListviewFragment extends Fragment {
             // 2. AdditionalInfo:   TemparrayListeAddInfo
 
             TemparrayListeAddInfo[i] = getAddInfoFromFilename(arrayListeFiles[i]); // 20160217_01_Allgemeine_Laber_Zeitung.pdf
-            Log.d(ListviewFragment.LOG_TAG, "getAddInfoFromFilename: " + TemparrayListeAddInfo[i] );
-            ListviewFragment.mNewspaperListAdapter.add(TemparrayListeAddInfo[i] + " \n" + arrayListeFiles[i]);
+            Log.d(ListviewFragment.LOG_TAG, "getAddInfoFromFilename: " + TemparrayListeAddInfo[i]);
+
+
+            if(arrayListeFiles[i].endsWith("_r.pdf")) // check if edition is marked as read
+            { // add a read symbol or text
+                sEditionReadSymbol[i] ="          " + "Ausgabe bereits gelesen"; // read
+                Log.d(ListviewFragment.LOG_TAG, "sEditionReadSymbol: " + sEditionReadSymbol[i]);
+                //todo move into string database
+                iBadgeCounter--;
+            }
+            else
+            {   // add empty string
+                sEditionReadSymbol[i] =" "; // unread
+
+            }
+
+
+            ListviewFragment.mNewspaperListAdapter.add(TemparrayListeAddInfo[i] + " \n" + arrayListeFiles[i] + sEditionReadSymbol[i]);
+
+            MainActivity.BadgeUpdate(iBadgeCounter, context);
+
 
         } // ToDo: Continue here!
 
@@ -279,7 +303,6 @@ public class ListviewFragment extends Fragment {
         String strings[];
         strings = string.split("_");
         // create Calender
-        String sdf = "";
 
         Log.d(ListviewFragment.LOG_TAG, "DateString " + strings[0]);
 
@@ -327,14 +350,30 @@ public class ListviewFragment extends Fragment {
             return;
         }
 
+        String sDetailNameRead = sDetailName;
+        // reaname file with read marking // if not already read
+        if(!sDetailName.endsWith("_r.pdf")) // check if edition is marked as read
+        {
+            sDetailNameRead = FilenameUtils.removeExtension(sDetailName) + "_r.pdf";
+
+            // File sdcard = Environment.getExternalStorageDirectory();
+            File from = new File(path, sDetailName);
+            File to = new File(path, sDetailNameRead);
+            from.renameTo(to);
+
+
+            // MainActivity.moveFile(path, sDetailName, sDetailNameRead, path);
+            MainActivity.BadgeDecrement(getActivity()); //decrement badge nr
+        }
+        fPdf = new File(path + sDetailNameRead);
+
         // open PDF
         Uri uriPdfFile = Uri.fromFile(fPdf);
         Log.d(ListviewFragment.LOG_TAG, "localUri: " + uriPdfFile.toString() );
-        Toast.makeText(getActivity(), "Opening File: " + sDetailName,
+        Toast.makeText(getActivity(), "Opening File: " + sDetailNameRead,
                 Toast.LENGTH_SHORT).show();
         openPDF(getActivity(), uriPdfFile);
         return;
     }
-
 
 }

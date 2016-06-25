@@ -1,7 +1,10 @@
 package oth_regensburg.automaticnewspaperdownloader;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,13 +35,14 @@ public class MainActivity extends ActionBarActivity {
         {   // typical syntax of filename: 20160217_01_Allgemeine_Laber_Zeitung.pdf
             // ToDo: Modify here, if different Newspaper is used.
 
-            return string.endsWith("Allgemeine_Laber_Zeitung.pdf");
+            // return string.endsWith("Allgemeine_Laber_Zeitung.pdf");
+
             // But this does not include Files that are downloaded twice.
             // In Example 20160217_01_Allgemeine_Laber_Zeitung(2).pdf is not recognised
 
             // This could be done using the following 2 code lines:
-            // String sRegEx = "(.+?)Allgemeine_Laber_Zeitung(.*?).pdf";
-            // return string.matches(sRegEx);
+            String sRegEx = "(.+?)Allgemeine_Laber_Zeitung(.*?).pdf";
+            return string.matches(sRegEx);
 
             // RegEx String for:
             // - (.+?)                      : String Starts with at least one character (any)
@@ -82,11 +86,20 @@ public class MainActivity extends ActionBarActivity {
             // Start Preferences Intent
             Log.d(AutoStartUpService.LOG_TAG, "Start Preferences-Intent");
             startActivity(new Intent(this, SettingsActivity.class));
+
+
+            //todo: remove following line
+            BadgeDecrement(this);
+
             return true;
         }
 
         if (id == R.id.action_contact) {
             // generate intent and start with expicit intent
+
+            //todo: remove following line
+            BadgeIncrement(this);
+
             Intent intentContact = new Intent(this, ContactActivity.class);
             startActivity(intentContact);
             return true;
@@ -96,6 +109,92 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static void BadgeIncrement(Context context)
+    {
+        int iBadgeCounter;
+        iBadgeCounter = BadgeRead(context);
+        iBadgeCounter++;
+        BadgeUpdate(iBadgeCounter, context);
+    }
+
+    public static void BadgeDecrement(Context context)
+    {
+        int iBadgeCounter;
+        iBadgeCounter = BadgeRead(context);
+        if(iBadgeCounter!=0)
+        {
+            iBadgeCounter--;
+            BadgeUpdate(iBadgeCounter, context);
+        }
+    }
+
+    public static int BadgeRead(Context context)
+    {
+
+        int iBadgeCount=0;
+        // This is the content uri for the BadgeProvider
+        Uri uri = Uri.parse("content://com.sec.badge/apps");
+
+        Cursor c = context.getContentResolver().query(uri, null, null, null, null);
+
+// This indicates the provider doesn't exist and you probably aren't running
+// on a Samsung phone running TWLauncher. This has to be outside of try/finally block
+        if (c == null) {
+            return 0;
+        }
+
+        try {
+            if (!c.moveToFirst()) {
+                // No results. Nothing to query
+                return 0;
+            }
+
+            c.moveToPosition(-1);
+            while (c.moveToNext()) {
+                String pkg = c.getString(1);
+                String clazz = c.getString(2);
+                int badgeCount = c.getInt(3);
+                Log.d("BadgeTest", "package: " + pkg + ", class: " + clazz + ", count: " + String.valueOf(badgeCount));
+                if (clazz.equals("oth_regensburg.automaticnewspaperdownloader.MainActivity"))
+                {
+                    Log.d("BadgeTest", "The badge count is currently " + String.valueOf(badgeCount));
+                    iBadgeCount=badgeCount;
+                }
+            }
+        } finally {
+            c.close();
+        }
+        return iBadgeCount;
+    }
+
+
+    public static boolean BadgeUpdate(int iNewBadgeValue, Context context)
+        {
+        //todo:
+        // debug for samsung badge support
+        ContentValues cv = new ContentValues();
+        cv.put("package", context.getPackageName());
+        // Name of your activity declared in the manifest as android.intent.action.MAIN.
+        // Must be fully qualified name as shown below
+        cv.put("class", "oth_regensburg.automaticnewspaperdownloader.MainActivity");
+        cv.put("badgecount", iNewBadgeValue); // integer count you want to display
+
+        // Execute insert
+        context.getContentResolver().insert(Uri.parse("content://com.sec.badge/apps"), cv);
+            return true;
+    }
+
+
+
+    public static boolean BadgeRemove(Context context)
+    {
+        //todo:
+        // debug for samsung badge support
+        ContentValues cv = new ContentValues();
+        cv.put("badgecount", 0);
+        context.getContentResolver().update(Uri.parse("content://com.sec.badge/apps"), cv, "package=?", new String[] {context.getPackageName()});
+        return true;
+    }
 
     public static boolean moveFilesToSdCard(Context context)
     {
@@ -169,6 +268,7 @@ public class MainActivity extends ActionBarActivity {
             {
                 // no update required, but snl do it..
                 ListviewFragment.arrayListeFiles = scanSdCardFolder();
+                AutoStartUpService.setContext(mContext);
                 AutoStartUpService.removeOldFiles(ListviewFragment.arrayListeFiles);
 
                 // Finish Swipe Refresh
@@ -194,7 +294,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     // Source: http://stackoverflow.com/questions/4178168/how-to-programmatically-move-copy-and-delete-files-and-directories-on-sd
-    static private void moveFile(String inputPath, String inputFile, String outputPath) {
+    static public void moveFile(String inputPath, String inputFile, String outputFile, String outputPath) {
 
         InputStream in = null;
         OutputStream out = null;
@@ -207,7 +307,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             in = new FileInputStream(inputPath + inputFile);
-            out = new FileOutputStream(outputPath + inputFile);
+            out = new FileOutputStream(outputPath + outputFile);
 
             byte[] buffer = new byte[1024];
             int read;
@@ -281,7 +381,7 @@ public class MainActivity extends ActionBarActivity {
                 // publish progress
                 publishProgress(i + 1, listOfFiles.length);
 
-                moveFile(directory.getAbsolutePath() + "/", listOfFiles[i].getName(), AutoStartUpService.sFilePath);
+                moveFile(directory.getAbsolutePath() + "/", listOfFiles[i].getName(), listOfFiles[i].getName(), AutoStartUpService.sFilePath);
             }
 
 
@@ -313,7 +413,7 @@ public class MainActivity extends ActionBarActivity {
 
             ListviewFragment.arrayListeFiles = scanSdCardFolder();
 
-            AutoStartUpService.removeOldFiles( ListviewFragment.arrayListeFiles );
+            AutoStartUpService.removeOldFiles(ListviewFragment.arrayListeFiles );
 
             // Finish Swipe Refresh
             ListviewFragment.mSwipeRefreshLayout.setRefreshing(false);

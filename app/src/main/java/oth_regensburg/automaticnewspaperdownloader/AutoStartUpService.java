@@ -5,6 +5,7 @@ package oth_regensburg.automaticnewspaperdownloader;
         import android.app.NotificationManager;
         import android.app.PendingIntent;
         import android.app.Service;
+        import android.content.ContentValues;
         import android.content.Context;
         import android.content.SharedPreferences;
         import android.net.ConnectivityManager;
@@ -437,6 +438,8 @@ public class AutoStartUpService extends Service {
                     Toast.makeText(mContext, "URL erfolgreich extrahiert! \n Starte Browser für Download",
                             Toast.LENGTH_SHORT).show();
 
+
+
                     // Launch browser with this code
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(strings[1]));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -471,6 +474,9 @@ public class AutoStartUpService extends Service {
                     //intent.putExtra("args", "--url=" + strings[0]);
                     //intent.setData(Uri.parse(strings[0]));
                     mContext.startActivity(intent2);
+
+                    // Duwnload sucessfully started -> increment counter on Samsung TouchWiz surface
+                    MainActivity.BadgeIncrement(mContext);
 
                 } else {
 
@@ -717,7 +723,7 @@ public class AutoStartUpService extends Service {
         }
         // UpdateListView
         ListviewFragment.arrayListeFiles = MainActivity.scanSdCardFolder();
-        ListviewFragment.refreshView(ListviewFragment.arrayListeFiles);
+        ListviewFragment.refreshView(ListviewFragment.arrayListeFiles, mContext);
         return;
 
     }
